@@ -43,7 +43,7 @@ def about_window():
              [sg.Button('Website', key="site")],
              [sg.Text("       CoYoTe' Clan* © 2024", justification='c')] ]
     layout2 = [  [sg.Column(colm)] ]
-    window2 = sg.Window(title="About", icon='icon.ico', element_justification='c', layout=layout2, modal=True, keep_on_top=True, size=(500, 500))
+    window2 = sg.Window(title="About", icon="icon.ico", element_justification='c', layout=layout2, modal=True, keep_on_top=True, size=(500, 500))
     
     while True:
         event, values = window2.read()
