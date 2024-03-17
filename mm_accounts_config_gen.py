@@ -2,10 +2,11 @@
 import PySimpleGUI as sg
 from re import findall
 from os import path
+from webbrowser import open as openurl
 
 currentdir = path.dirname(os.path.realpath(__file__))
 file_path = path.join(currentdir, "mm_accounts.cfg")
-file_path = "mm_accounts.cfg"
+file_path = "mm_accounts.cfg" #For Android 
 
 def compress_numbers(string):
     numbers = list(map(int, findall(r'\d+', string)))
@@ -13,6 +14,9 @@ def compress_numbers(string):
     compressed = []
     start = numbers[0]
     end = numbers[0]
+    for num in numbers:
+        if num == 9999:
+            return "*"
     
     for num in numbers[1:]:
         if num == end + 1:
@@ -32,6 +36,33 @@ def compress_numbers(string):
     
     return ':'.join(compressed)
 
+def about_window():
+    colm = [ [sg.Text("A simple tool made\n for configuring\n MiscMod commands groups.", justification="c")],
+             [sg.Button('Discord', key="dsc")],
+             [sg.Button('Github', key="ghb"), sg.Image("logo.png", expand_x=True)],
+             [sg.Button('Website', key="site")],
+             [sg.Text("       CoYoTe' Clan* © 2024", justification='c')] ]
+    layout2 = [  [sg.Column(colm)] ]
+    window2 = sg.Window(title="About", icon='icon.ico', element_justification='c', layout=layout2, modal=True, keep_on_top=True, size=(500, 500))
+    
+    while True:
+        event, values = window2.read()
+        if event == sg.WIN_CLOSED:
+            break
+        
+        if event == 'dsc':
+            openurl("https://dsc.gg/coyoteclan")
+            window2.close()
+            break
+        if event == 'ghb':
+            openurl("https://github.com/coyoteclan")
+            window2.close()
+            break
+        if event == 'site':
+            openurl("https://coyote.rf.gd")
+            window2.close()
+            break
+
 sg.theme('Dark Green 5')
 groups = []
 default_groups = "^1Owner^7 ^3Co-Owner^7 ^4Admin^7"
@@ -39,7 +70,7 @@ users = []
 default_users = "user1 user2 user3"
 users_pass = ""
 
-menu_def = [ ['File', ['New', 'Exit']], ['Help', ['About']] ]
+menu_def = [ ['File', ['Exit']], ['Help', ['About']] ]
 
 column4 = [  [sg.Text('Set Permissions', font=("Helvetica", 12, "bold"))],
              [sg.Checkbox("All", key="9999")],
@@ -63,11 +94,15 @@ column4 = [  [sg.Text('Set Permissions', font=("Helvetica", 12, "bold"))],
             [sg.Checkbox('psk', key="52"), sg.Checkbox('belmenu', key="53"), sg.Checkbox('swapteams', key="64"), sg.Checkbox('meleekill', key="61")],
             [sg.Text('More Commands', font=("Helvetica", 10))],
             [sg.Checkbox('rs', key="56"), sg.Checkbox('optimize', key="57"), sg.Checkbox('pcvar', key="58"), sg.Checkbox('respawn', key="59"), sg.Checkbox('wmap', key="60")],
+            [sg.Checkbox('teambalance', key="63"), sg.Checkbox('scvar', key="67"), sg.Checkbox('bansearch', key="68"), sg.Checkbox('banlist', key="69")],
+            [sg.Checkbox('reportlist', key="70"), sg.Checkbox('namechange', key="71")],
+            [sg.Text('Extra Permissions', font=("Helvetica", 10))],
+            [sg.InputText(key="extras", size=20, tooltip="Specify any extra permissions if you use custom commands. Otherwise, leave this empty.")],
             [sg.Button('Save Group', tooltip="Do it!")] ]
 column3 = [  [sg.Text('Set Password', font=("Helvetica", 12, "bold"))],
             [sg.Combo([], enable_events=True, size=18, readonly=False, key="displayGroup"), sg.Combo([], enable_events=True, size=18, readonly=False, key="usersMenu")],
                 [sg.Text('Enter Password Here', font=("Helvetica", 8))],
-                [sg.InputText(key="password", do_not_clear=False)],
+                [sg.InputText(key="password", tooltip="Enter password for each user one by one in the selected group and click Add. Once done, click Done and then save the group. Then do the same for other groups and users.", do_not_clear=False)],
                 [sg.Button('Add', key="add", tooltip="Add this user's password."), sg.Button('Done', key="done2", tooltip="All users done for this group. Set Permissions and then click Save Group.", disabled=True)] ]
 
 column2 = [  [sg.Text('Add Users', font=("Helvetica", 12, "bold"))],
@@ -79,18 +114,23 @@ column1 = [  [sg.Text('Add Groups', font=("Helvetica", 12, "bold"))],
             [sg.InputText(key="groups_input", default_text=default_groups, tooltip="Enter all the groups here, seperated by spaces.")],
             [sg.Button('Next', tooltip="Let's Go!")] ]
 layout = [  [sg.Menu(menu_def)],
-            [sg.Column(column1)],
+            [sg.Column(column1, key="1stcol")],
             [sg.Column(column2, visible=False, key="2")],
             [sg.Column(column3, visible=False, key="3")],
             [sg.Column(column4, visible=False, key="4", scrollable=True)] ]
-window = sg.Window(title="MiscMod Account Config Gen", layout=layout, size=(760, 1000))
+window = sg.Window(title="MiscMod Account Config Gen", icon="icon.ico", layout=layout, size=(760, 1000))
 
 while True:
     event, values = window.read()
     if event == sg.WIN_CLOSED:
         break
+
+    if event == 'Exit':
+        break
+    if event == 'About':
+        about_window()
+
     if event == 'Next':
-        #window.ding(display_number = 0)
         groups_input = values["groups_input"].split(" ")
         groups.extend(groups_input)
         mm_groups = ";".join(groups)
@@ -111,6 +151,8 @@ while True:
         window['displayGroup'].update(values=groups)
         window['displayGroup'].update(disabled=False)
         window['usersMenu'].update(values=users)
+        window['1stcol'].update(visible=False)
+        window['1stcol'].Widget.master.pack_forget()
         window.refresh()
 
     if event == 'add':
@@ -130,8 +172,9 @@ while True:
         selected_perms = [key for key, value in values.items() if value and isinstance(window[key], sg.Checkbox)]
         perms = f":".join(selected_perms)
         perms = compress_numbers(perms)
-        if perms == "9999":
-            perms = "*"
+        if perms != "*":
+            perms += f":{values['extras']}"
+
         string = f"scr_mm_users_{selected_group} \"{users_pass.strip()}\"\nscr_mm_perms_{selected_group} \"{perms}\"\n"
 
         with open(file_path, 'a') as f:
