@@ -172,7 +172,7 @@ while True:
         selected_perms = [key for key, value in values.items() if value and isinstance(window[key], sg.Checkbox)]
         perms = f":".join(selected_perms)
         perms = compress_numbers(perms)
-        if perms != "*":
+        if perms != "*" and values['extras'] != "":
             perms += f":{values['extras']}"
 
         string = f"scr_mm_users_{selected_group} \"{users_pass.strip()}\"\nscr_mm_perms_{selected_group} \"{perms}\"\n"
