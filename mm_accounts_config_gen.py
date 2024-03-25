@@ -4,9 +4,9 @@ from re import findall
 from os import path
 from webbrowser import open as openurl
 
-currentdir = path.dirname(os.path.realpath(__file__))
+currentdir = path.dirname(path.realpath(__file__))
 file_path = path.join(currentdir, "mm_accounts.cfg")
-file_path = "mm_accounts.cfg" #For Android 
+#file_path = "mm_accounts.cfg" #For Android 
 
 def compress_numbers(string):
     numbers = list(map(int, findall(r'\d+', string)))
