@@ -15,4 +15,5 @@
   - Download the code as zip and extract it.
   - Open powershell(windows) or Terminal(linux) in the folder.
   - Run using `python mm_accounts_config_gen.py`(windows) or `python3 mm_accounts_config_gen.py` in powershell/terminal.
-Maybe rename the file for ease.
+
+    Windows users can simply run `run.bat` file to do all this.
