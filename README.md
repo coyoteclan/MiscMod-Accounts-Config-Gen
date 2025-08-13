@@ -1,3 +1,8 @@
+# INFO
+Migrated to GitLab:
+https://gitlab.com/kazam0180/MiscMod-Accounts-Config-Gen
+
+
 # MiscMod-Accounts-Config-Gen
 ### Preview
 ![alt text](https://raw.githubusercontent.com/coyoteclan/MiscMod-Accounts-Config-Gen/main/photo1.png "Photo 1.png")
